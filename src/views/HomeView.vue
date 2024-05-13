@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import Dock from '@/components/Dock/Dock.vue';
 </script>
 
 <template>
   <div>
-    123456
+    <dock></dock>
   </div>
 </template>
 
