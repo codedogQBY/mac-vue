@@ -1,19 +1,55 @@
 <script lang="ts" setup>
 import DockItem from './DockItem.vue'
 import {ref, onMounted, onUnmounted} from 'vue'
-import {interpolate} from 'popmotion'
-// 鼠标悬停时的X坐标
-const mouseX = ref(0)
-// 鼠标移动事件
-const onMouseMove = (e: MouseEvent) => {
-  mouseX.value = e.clientX
-}
+
+const DockElement = ref<HTMLElement | null>(null)
+
+// 加载时默认显示5s,5s后向下隐藏
+let timer: number | null = null
+
+
 onMounted(() => {
-  window.addEventListener('mousemove', onMouseMove)
+  DockElement.value = document.getElementById('dock-container')
+  const dock = DockElement.value
+  if (!dock) return
+  dock.style.transform = 'translateY(0)'
+  const hideDock = () => {
+    dock.style.transform = 'translateY(100%)'
+    timer = null
+  }
+
+  timer = setTimeout(hideDock, 3000)
+
+  dock.addEventListener('mouseenter', () => {
+    if (timer) {
+      clearTimeout(timer)
+      dock.style.transform = 'translateY(0)'
+    }
+  })
+
+  dock.addEventListener('mouseleave', () => {
+    timer = setTimeout(hideDock, 100)
+  })
+
+  // 鼠标移动到浏览器窗口底部有一个dock的高度时，dock显示
+  window.addEventListener('mousemove', (e: MouseEvent) => {
+    // 如果鼠标按住左键，dock不显示
+    if (e.buttons === 1) return
+    if (timer) return
+    const {clientY} = e
+    const {innerHeight} = window
+    if (innerHeight - clientY < 100) {
+      dock.style.transform = 'translateY(0)'
+    } else {
+      dock.style.transform = 'translateY(100%)'
+    }
+  })
 })
+
 onUnmounted(() => {
-  window.removeEventListener('mousemove', onMouseMove)
+  if (timer) clearTimeout(timer)
 })
+
 const dockItems = [
   {appID: 'menu', title: '启动台'},
   {appID: 'read', title: '文章'},
@@ -29,7 +65,7 @@ const dockItems = [
 </script>
 
 <template>
-  <div class="dock-container">
+  <div class="dock-container" id="dock-container">
     <div class="dock-bar">
       <DockItem
           v-for="item in dockItems"
@@ -52,6 +88,7 @@ const dockItems = [
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 0.5s ease;
 
   .dock-bar {
     background-color: hsla(var(--system-color-light-hsl), 0.4);
