@@ -11,7 +11,7 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VitePWA({
-      includeAssets: ['assets/**']
+      includeAssets: ['assets/*'],
     })
   ],
   css: {
