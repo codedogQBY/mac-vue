@@ -51,7 +51,7 @@ const resizeWindow = (e: MouseEvent) => {
   const {offsetWidth, offsetHeight} = window;
   const isLeft = clientX - left < 10;
   const isRight = left + width - clientX < 10;
-  const isTop = clientY - top < 10;
+  const isTop = clientY - top < 2;
   const isBottom = top + height - clientY < 10;
   const isTopLeft = isTop && isLeft;
   const isTopRight = isTop && isRight;
