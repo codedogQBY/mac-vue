@@ -158,6 +158,9 @@ const dragHeader = (e: MouseEvent) => {
   // 如果处于缩放状态，不允许拖动
   if (isResizing.value) return
 
+  // 如果不是鼠标左键按下，不允许拖动
+  if (e.buttons !== 1) return;
+
   // 鼠标样式如果不是默认状态，不允许拖动
   if (windowEl.style.cursor !== 'default') return
 
