@@ -1,4 +1,4 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useAppsStore = defineStore('apps', () => {})
+export const useDockStore = defineStore('dock', () => {})

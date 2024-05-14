@@ -1,13 +1,30 @@
 <script setup lang="ts">
+import {ref,watch} from 'vue';
 import Dock from '@/components/Dock/Dock.vue';
-import VueDemo from '@/apps/vueDemo/VueDemo.vue';
+import {useAppsStore} from "@/stores/apps";
+
+
+
+const appsStore = useAppsStore();
+const {openedApps} = appsStore;
+
+watch(openedApps, (newVal) => {
+  console.log(newVal);
+});
+
+
 </script>
 
 
 <template>
   <!--  背景图片，铺满屏幕-->
   <div class="home-container">
-    <VueDemo/>
+    <!--  展示所有打开的app-->
+    <div v-for="app in openedApps" :key="app.appID">
+      <component :is="app.component" />
+    </div>
+
+    <!--  底部dock-->
     <Dock/>
   </div>
 </template>

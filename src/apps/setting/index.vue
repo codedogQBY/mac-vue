@@ -9,7 +9,7 @@ const setting = ref([
 </script>
 
 <template>
-  <Window title="Setting">
+  <Window app-i-d="setting" title="Setting">
     <div>
       <h1>Setting</h1>
       <p>Here is a list of your setting:</p>

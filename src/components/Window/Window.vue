@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, onUnmounted } from 'vue'
+import { defineProps, ref, onMounted, onUnmounted,computed } from 'vue'
 import WindowHeader from './WindowHeader.vue'
 import WindowContent from './WindowContent.vue'
+import { useAppsStore } from '@/stores/apps'
+
+const appsStore = useAppsStore()
+const { closeApp, showApp, hideApp, isShowApp, isActiveApp ,handleActiveApp } = appsStore
 
 const props = defineProps({
   appID: {
@@ -41,6 +45,9 @@ function throttle(fn: Function, delay: number) {
 }
 
 const resizeWindow = (e: MouseEvent) => {
+  // 不是激活状态的app不允许缩放
+  if (!isActiveApp(appID)) return
+
   // 鼠标移动到窗口边缘时，改变鼠标样式
   const windowEl = WindowElement.value
   if (!windowEl) return
@@ -139,7 +146,7 @@ const resizeWindow = (e: MouseEvent) => {
     } else if (isBottomRight) {
       setWindowStyle({ newWidth: startWidth + deltaX, newHeight: startHeight + deltaY })
     }
-  }, 0)
+  }, 10)
 
   const onMouseUp = () => {
     isResizing.value = false
@@ -153,13 +160,16 @@ const resizeWindow = (e: MouseEvent) => {
 
 // header部分可以拖动
 const dragHeader = (e: MouseEvent) => {
+  // 不是激活状态的app不允许拖动
+  if (!isActiveApp(appID)) return
+
   const windowEl = WindowElement.value
   if (!windowEl) return
   // 如果处于缩放状态，不允许拖动
   if (isResizing.value) return
 
   // 如果不是鼠标左键按下，不允许拖动
-  if (e.buttons !== 1) return;
+  if (e.buttons !== 1) return
 
   // 鼠标样式如果不是默认状态，不允许拖动
   if (windowEl.style.cursor !== 'default') return
@@ -175,7 +185,7 @@ const dragHeader = (e: MouseEvent) => {
     const deltaY = e.clientY - startY
     windowEl.style.left = `${left + deltaX}px`
     windowEl.style.top = `${top + deltaY}px`
-  }, 0)
+  }, 10)
   const onMouseUp = () => {
     isDragging.value = false
     document.removeEventListener('mousemove', onMouseMove)
@@ -207,11 +217,15 @@ onUnmounted(() => {
 })
 
 const closeWindow = () => {
-  console.log('closeWindow')
+  closeApp(appID)
 }
 
 const minimizeWindow = () => {
-  console.log('minimizeWindow')
+  if (isShowApp(appID)) {
+    hideApp(appID)
+  } else {
+    showApp(appID)
+  }
 }
 
 const maximizeWindow = () => {
@@ -220,13 +234,24 @@ const maximizeWindow = () => {
 </script>
 
 <template>
-  <div class="window" :id="appID" style="z-index: 10">
+  <div
+    class="window"
+    :id="appID"
+    :style="{
+      width: `${width}px`,
+      height: `${height}px`,
+      userSelect: isResizing || isDragging ? 'none' : 'auto'
+    }"
+    v-show="isShowApp(appID)"
+    @click="handleActiveApp(appID)"
+  >
     <div class="window-header" :id="`header-${appID}`">
       <WindowHeader @close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow">
         <slot name="header"></slot>
       </WindowHeader>
     </div>
-    <div class="window-content" :id="`content-${appID}`">
+    <div class="window-content" :id="`content-${appID}`"
+    >
       <WindowContent>
         <slot></slot>
       </WindowContent>
