@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import Dock from '@/components/Dock/Dock.vue';
-import Window from '@/components/Window/Window.vue';
+import VueDemo from '@/apps/vueDemo/VueDemo.vue';
 </script>
 
 
 <template>
   <!--  背景图片，铺满屏幕-->
   <div class="home-container">
-    <!--  窗口组件-->
-    <Window appID="file" width="800" height="600"/>
+    <VueDemo/>
     <Dock/>
   </div>
 </template>
@@ -20,7 +19,7 @@ import Window from '@/components/Window/Window.vue';
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/wallpapers/1.png');
+  background-image: url('/wallpapers/2.jpg');
   background-size: cover;
   background-position: center;
 }

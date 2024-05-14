@@ -4,7 +4,6 @@ import {defineProps} from 'vue';
 const props = defineProps<{
   appID: string
   title: string
-  mouseX?: number
 }>()
 
 const {appID, title} = props
