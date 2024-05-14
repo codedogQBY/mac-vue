@@ -15,12 +15,15 @@ export const useAppsStore = defineStore('apps', () => {
     const openedApps = ref<App[]>([])
     const activeApp = ref<App | null>(null)
 
+    const zIndex = ref(2);
+
     const appCount = computed(() => openedApps.value.length)
 
     const handleActiveApp = (appID: string) => {
         const app = openedApps.value.find(app => app.appID === appID)
         if (!app) return
         activeApp.value = app
+        zIndex.value++
     }
 
     const isActiveApp = (appID: string) => {
@@ -78,6 +81,7 @@ export const useAppsStore = defineStore('apps', () => {
         hideApp,
         isShowApp,
         handleActiveApp,
-        isActiveApp
+        isActiveApp,
+        zIndex
     }
 })

@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, onUnmounted,computed } from 'vue'
+import { defineProps, ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import WindowHeader from './WindowHeader.vue'
 import WindowContent from './WindowContent.vue'
 import { useAppsStore } from '@/stores/apps'
 
 const appsStore = useAppsStore()
-const { closeApp, showApp, hideApp, isShowApp, isActiveApp ,handleActiveApp } = appsStore
+const { closeApp, showApp, hideApp, isShowApp, isActiveApp, handleActiveApp } = appsStore
+
 
 const props = defineProps({
   appID: {
@@ -240,7 +241,7 @@ const maximizeWindow = () => {
     :style="{
       width: `${width}px`,
       height: `${height}px`,
-      userSelect: isResizing || isDragging ? 'none' : 'auto'
+      userSelect: isResizing || isDragging ? 'none' : 'auto',
     }"
     v-show="isShowApp(appID)"
     @click="handleActiveApp(appID)"
@@ -250,8 +251,7 @@ const maximizeWindow = () => {
         <slot name="header"></slot>
       </WindowHeader>
     </div>
-    <div class="window-content" :id="`content-${appID}`"
-    >
+    <div class="window-content" :id="`content-${appID}`">
       <WindowContent>
         <slot></slot>
       </WindowContent>
