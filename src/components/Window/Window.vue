@@ -7,7 +7,8 @@ import { useAppsStore } from '@/stores/apps'
 
 const appsStore = useAppsStore()
 const { apps } = storeToRefs(appsStore)
-const { closeApp, showApp, hideApp, isShowApp, isActiveApp, handleActiveApp } = appsStore
+
+const { closeApp, showApp, hideApp, isShowApp, isActiveApp, handleActiveApp,updateAppPosition } = appsStore
 
 const app = computed(() => apps.value.find((app) => app.appID === appID))
 
@@ -35,6 +36,10 @@ const HeaderElement = ref<HTMLElement | null>(null)
 const isResizing = ref(false)
 // 是否处于拖动状态
 const isDragging = ref(false)
+// 是否处于最大化状态
+const isMaximized = ref(false)
+// 窗口的初始位置
+const { top = 0, left = 0 } = app.value || {}
 
 // 节流函数
 function throttle(fn: Function, delay: number) {
@@ -115,6 +120,7 @@ const resizeWindow = (e: MouseEvent) => {
     windowEl.style.height = `${newHeight}px`
     windowEl.style.left = `${newLeft}px`
     windowEl.style.top = `${newTop}px`
+    updateAppPosition(appID, newTop,newLeft )
   }
 
   const onMouseMove = throttle((e: MouseEvent) => {
@@ -196,6 +202,8 @@ const dragHeader = (e: MouseEvent) => {
     const newLeft = left + deltaX
     windowEl.style.top = `${newTop}px`
     windowEl.style.left = `${newLeft}px`
+
+    updateAppPosition(appID, newTop,newLeft )
   }, 0)
   const onMouseUp = () => {
     isDragging.value = false
@@ -236,12 +244,32 @@ const minimizeWindow = () => {
   if (isShowApp(appID)) {
     hideApp(appID)
   } else {
+    // 打开到原来的位置
+    const windowEl = WindowElement.value
+    if (windowEl) {
+      const { top, left } = app.value!
+      windowEl.style.top = `${top}px`
+      windowEl.style.left = `${left}px`
+    }
     showApp(appID)
   }
 }
 
 const maximizeWindow = () => {
-  console.log('maximizeWindow')
+  const windowEl = WindowElement.value
+  if (!windowEl) return
+  if (isMaximized.value) {
+    windowEl.style.width = `${width}px`
+    windowEl.style.height = `${height}px`
+    windowEl.style.top = `${app?.value?.top}px`
+    windowEl.style.left = `${app?.value?.left}px`
+  } else {
+    windowEl.style.width = '100%'
+    windowEl.style.height = '100%'
+    windowEl.style.top = '0'
+    windowEl.style.left = '0'
+  }
+  isMaximized.value = !isMaximized.value
 }
 </script>
 
@@ -252,7 +280,9 @@ const maximizeWindow = () => {
     :style="{
       width: `${width}px`,
       height: `${height}px`,
-      zIndex: app?.zIndex
+      zIndex: app?.zIndex,
+      top: `${top}px`,
+      left: `${left}px`
     }"
     v-show="isShowApp(appID)"
     @click="() => handleActiveApp(appID)"

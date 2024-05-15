@@ -8,8 +8,9 @@ type App = {
     icon: string
     component: any
     isShow?: boolean
-
     zIndex: number
+    top?: number
+    left?: number
 }
 
 export const useAppsStore = defineStore('apps', () => {
@@ -29,6 +30,14 @@ export const useAppsStore = defineStore('apps', () => {
         activeApp.value = app
     }
 
+    // 更新app的位置
+    const updateAppPosition = (appID: string, top?: number, left?: number) => {
+        const app = openedApps.value.find(app => app.appID === appID)
+        if (!app) return
+        app.top = top || 0
+        app.left = left || 0
+    }
+
     const isActiveApp = (appID: string) => {
         return activeApp.value?.appID === appID
     }
@@ -39,6 +48,7 @@ export const useAppsStore = defineStore('apps', () => {
         openedApps.value.splice(index, 1)
         if (activeApp.value?.appID === appID) {
             activeApp.value.zIndex = 2
+            activeApp.value.isShow = false
             activeApp.value = openedApps.value[openedApps.value.length - 1] || null
         }
     }
@@ -58,8 +68,7 @@ export const useAppsStore = defineStore('apps', () => {
     // 当前app是显示还是隐藏
     const isShowApp = (appID: string) => {
         const app = openedApps.value.find(app => app.appID === appID)
-        if (!app) return false
-        return app.isShow
+        return app?.isShow
     }
 
     const openApp = (appID: string) => {
@@ -72,6 +81,7 @@ export const useAppsStore = defineStore('apps', () => {
         }
         openedApps.value.push(app)
         app.zIndex = zIndex.value
+        app.isShow = true
         activeApp.value = app
     }
 
@@ -87,5 +97,6 @@ export const useAppsStore = defineStore('apps', () => {
         isShowApp,
         handleActiveApp,
         isActiveApp,
+        updateAppPosition
     }
 })
