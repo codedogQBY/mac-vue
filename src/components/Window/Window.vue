@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { defineProps, ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { defineProps, ref, onMounted, onUnmounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import WindowHeader from './WindowHeader.vue'
 import WindowContent from './WindowContent.vue'
 import { useAppsStore } from '@/stores/apps'
 
 const appsStore = useAppsStore()
+const { apps } = storeToRefs(appsStore)
 const { closeApp, showApp, hideApp, isShowApp, isActiveApp, handleActiveApp } = appsStore
 
+const app = computed(() => apps.value.find((app) => app.appID === appID))
 
 const props = defineProps({
   appID: {
@@ -88,6 +91,7 @@ const resizeWindow = (e: MouseEvent) => {
 
   // 标记是否处于缩放状态
   isResizing.value = true
+  windowEl.style.userSelect = 'none'
 
   const startX = e.clientX
   const startY = e.clientY
@@ -147,10 +151,11 @@ const resizeWindow = (e: MouseEvent) => {
     } else if (isBottomRight) {
       setWindowStyle({ newWidth: startWidth + deltaX, newHeight: startHeight + deltaY })
     }
-  }, 10)
+  }, 0)
 
   const onMouseUp = () => {
     isResizing.value = false
+    windowEl.style.userSelect = 'auto'
     document.removeEventListener('mousemove', onMouseMove)
     document.removeEventListener('mouseup', onMouseUp)
   }
@@ -177,6 +182,7 @@ const dragHeader = (e: MouseEvent) => {
 
   // 标记是否处于拖动状态
   isDragging.value = true
+  windowEl.style.userSelect = 'none'
 
   const { left, top } = windowEl.getBoundingClientRect()
   const startX = e.clientX
@@ -184,11 +190,16 @@ const dragHeader = (e: MouseEvent) => {
   const onMouseMove = throttle((e: MouseEvent) => {
     const deltaX = e.clientX - startX
     const deltaY = e.clientY - startY
-    windowEl.style.left = `${left + deltaX}px`
-    windowEl.style.top = `${top + deltaY}px`
-  }, 10)
+
+    // 禁止窗口拖出屏幕顶部
+    const newTop = Math.max(top + deltaY, 0)
+    const newLeft = left + deltaX
+    windowEl.style.top = `${newTop}px`
+    windowEl.style.left = `${newLeft}px`
+  }, 0)
   const onMouseUp = () => {
     isDragging.value = false
+    windowEl.style.userSelect = 'auto'
     document.removeEventListener('mousemove', onMouseMove)
     document.removeEventListener('mouseup', onMouseUp)
   }
@@ -241,10 +252,10 @@ const maximizeWindow = () => {
     :style="{
       width: `${width}px`,
       height: `${height}px`,
-      userSelect: isResizing || isDragging ? 'none' : 'auto',
+      zIndex: app?.zIndex
     }"
     v-show="isShowApp(appID)"
-    @click="handleActiveApp(appID)"
+    @click="() => handleActiveApp(appID)"
   >
     <div class="window-header" :id="`header-${appID}`">
       <WindowHeader @close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow">

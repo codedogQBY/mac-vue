@@ -8,6 +8,8 @@ type App = {
     icon: string
     component: any
     isShow?: boolean
+
+    zIndex: number
 }
 
 export const useAppsStore = defineStore('apps', () => {
@@ -15,15 +17,16 @@ export const useAppsStore = defineStore('apps', () => {
     const openedApps = ref<App[]>([])
     const activeApp = ref<App | null>(null)
 
-    const zIndex = ref(2);
-
     const appCount = computed(() => openedApps.value.length)
 
+    const zIndex = ref(3)
     const handleActiveApp = (appID: string) => {
         const app = openedApps.value.find(app => app.appID === appID)
         if (!app) return
-        activeApp.value = app
+        if (activeApp.value?.appID === appID) return
         zIndex.value++
+        app.zIndex = zIndex.value
+        activeApp.value = app
     }
 
     const isActiveApp = (appID: string) => {
@@ -35,6 +38,7 @@ export const useAppsStore = defineStore('apps', () => {
         if (index === -1) return
         openedApps.value.splice(index, 1)
         if (activeApp.value?.appID === appID) {
+            activeApp.value.zIndex = 2
             activeApp.value = openedApps.value[openedApps.value.length - 1] || null
         }
     }
@@ -67,6 +71,7 @@ export const useAppsStore = defineStore('apps', () => {
             return
         }
         openedApps.value.push(app)
+        app.zIndex = zIndex.value
         activeApp.value = app
     }
 
@@ -82,6 +87,5 @@ export const useAppsStore = defineStore('apps', () => {
         isShowApp,
         handleActiveApp,
         isActiveApp,
-        zIndex
     }
 })

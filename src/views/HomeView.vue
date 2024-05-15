@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import {ref,watch} from 'vue';
-import Dock from '@/components/Dock/Dock.vue';
-import {useAppsStore} from "@/stores/apps";
+import { ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import Dock from '@/components/Dock/Dock.vue'
+import { useAppsStore } from '@/stores/apps'
 
-
-
-const appsStore = useAppsStore();
-const {openedApps} = appsStore;
-
-watch(openedApps, (newVal) => {
-  console.log(newVal);
-});
-
-
+const appsStore = useAppsStore()
+const { openedApps } = storeToRefs(appsStore)
 </script>
-
 
 <template>
   <!--  背景图片，铺满屏幕-->
@@ -25,7 +17,7 @@ watch(openedApps, (newVal) => {
     </div>
 
     <!--  底部dock-->
-    <Dock/>
+    <Dock />
   </div>
 </template>
 

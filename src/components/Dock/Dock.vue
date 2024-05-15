@@ -92,6 +92,7 @@ const dockItems = [
   justify-content: center;
   align-items: center;
   transition: transform 0.5s ease;
+  z-index: 99999;
 
   .dock-bar {
     background-color: hsla(var(--system-color-light-hsl), 0.4);
