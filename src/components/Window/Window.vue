@@ -39,7 +39,8 @@ const isDragging = ref(false)
 // 是否处于最大化状态
 const isMaximized = ref(false)
 // 窗口的初始位置
-const { top = 0, left = 0 } = app.value || {}
+const windowTop = ref(app.value?.top ?? 0)
+const windowLeft = ref(app.value?.left ?? 0)
 
 // 节流函数
 function throttle(fn: Function, delay: number) {
@@ -121,6 +122,8 @@ const resizeWindow = (e: MouseEvent) => {
     windowEl.style.left = `${newLeft}px`
     windowEl.style.top = `${newTop}px`
     updateAppPosition(appID, newTop,newLeft )
+    windowTop.value = newTop ?? windowTop.value
+    windowLeft.value = newLeft ?? windowLeft.value
   }
 
   const onMouseMove = throttle((e: MouseEvent) => {
@@ -204,6 +207,8 @@ const dragHeader = (e: MouseEvent) => {
     windowEl.style.left = `${newLeft}px`
 
     updateAppPosition(appID, newTop,newLeft )
+    windowTop.value = newTop ?? windowTop.value
+    windowLeft.value = newLeft ?? windowLeft.value
   }, 0)
   const onMouseUp = () => {
     isDragging.value = false
