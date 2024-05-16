@@ -56,6 +56,7 @@ export const useAppsStore = defineStore('apps', () => {
     const showApp = (appID: string) => {
         const app = openedApps.value.find(app => app.appID === appID)
         if (!app) return
+        app.zIndex = zIndex.value
         app.isShow = true
     }
 

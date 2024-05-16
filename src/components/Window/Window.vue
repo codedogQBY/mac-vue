@@ -17,20 +17,16 @@ const props = defineProps({
     type: String,
     required: true
   },
-  width: {
-    type: Number,
-    default: 800
-  },
-  height: {
-    type: Number,
-    default: 600
-  }
 })
 
-const { appID, width, height } = props
+const { appID } = props
 
 const WindowElement = ref<HTMLElement | null>(null)
 const HeaderElement = ref<HTMLElement | null>(null)
+
+// 宽高
+const windowWidth = ref(800)
+const windowHeight = ref(600)
 
 // 是否处于缩放状态
 const isResizing = ref(false)
@@ -124,6 +120,8 @@ const resizeWindow = (e: MouseEvent) => {
     updateAppPosition(appID, newTop,newLeft )
     windowTop.value = newTop ?? windowTop.value
     windowLeft.value = newLeft ?? windowLeft.value
+    windowHeight.value = newHeight ?? windowHeight.value
+    windowWidth.value = newWidth ?? windowWidth.value
   }
 
   const onMouseMove = throttle((e: MouseEvent) => {
@@ -264,10 +262,10 @@ const maximizeWindow = () => {
   const windowEl = WindowElement.value
   if (!windowEl) return
   if (isMaximized.value) {
-    windowEl.style.width = `${width}px`
-    windowEl.style.height = `${height}px`
-    windowEl.style.top = `${app?.value?.top}px`
-    windowEl.style.left = `${app?.value?.left}px`
+    windowEl.style.width = `${windowWidth.value}px`
+    windowEl.style.height = `${windowHeight.value}px`
+    windowEl.style.top = `${windowTop.value}px`
+    windowEl.style.left = `${windowLeft.value}px`
   } else {
     windowEl.style.width = '100%'
     windowEl.style.height = '100%'
@@ -283,11 +281,11 @@ const maximizeWindow = () => {
     class="window"
     :id="appID"
     :style="{
-      width: `${width}px`,
-      height: `${height}px`,
+      width: `${windowWidth}px`,
+      height: `${windowHeight}px`,
       zIndex: app?.zIndex,
-      top: `${top}px`,
-      left: `${left}px`
+      top: `${windowTop}px`,
+      left: `${windowLeft}px`
     }"
     v-show="isShowApp(appID)"
     @click="() => handleActiveApp(appID)"
