@@ -28,6 +28,9 @@ const HeaderElement = ref<HTMLElement | null>(null)
 const windowWidth = ref(800)
 const windowHeight = ref(600)
 
+// 顶部栏的高度
+const topBarHeight = 1.4 * 16;
+
 // 是否处于缩放状态
 const isResizing = ref(false)
 // 是否处于拖动状态
@@ -35,7 +38,7 @@ const isDragging = ref(false)
 // 是否处于最大化状态
 const isMaximized = ref(false)
 // 窗口的初始位置
-const windowTop = ref(app.value?.top ?? 0)
+const windowTop = ref(app.value?.top ?? topBarHeight)
 const windowLeft = ref(app.value?.left ?? 0)
 
 // 节流函数
@@ -113,8 +116,8 @@ const resizeWindow = (e: MouseEvent) => {
     newTop,
     newLeft
   }: T) => {
-    windowEl.style.width = `${newWidth}px`
-    windowEl.style.height = `${newHeight}px`
+    windowEl.style.width = `${newWidth / 16}rem`
+    windowEl.style.height = `${newHeight / 16}rem`
     windowEl.style.left = `${newLeft}px`
     windowEl.style.top = `${newTop}px`
     updateAppPosition(appID, newTop,newLeft )
@@ -199,7 +202,7 @@ const dragHeader = (e: MouseEvent) => {
     const deltaY = e.clientY - startY
 
     // 禁止窗口拖出屏幕顶部
-    const newTop = Math.max(top + deltaY, 0)
+    const newTop = Math.max(top + deltaY, topBarHeight)
     const newLeft = left + deltaX
     windowEl.style.top = `${newTop}px`
     windowEl.style.left = `${newLeft}px`
@@ -262,8 +265,8 @@ const maximizeWindow = () => {
   const windowEl = WindowElement.value
   if (!windowEl) return
   if (isMaximized.value) {
-    windowEl.style.width = `${windowWidth.value}px`
-    windowEl.style.height = `${windowHeight.value}px`
+    windowEl.style.width = `${windowWidth.value / 16}rem`
+    windowEl.style.height = `${windowHeight.value / 16}rem`
     windowEl.style.top = `${windowTop.value}px`
     windowEl.style.left = `${windowLeft.value}px`
   } else {
@@ -281,8 +284,8 @@ const maximizeWindow = () => {
     class="window"
     :id="appID"
     :style="{
-      width: `${windowWidth}px`,
-      height: `${windowHeight}px`,
+      width: `${windowWidth / 16}rem`,
+      height: `${windowHeight / 16}rem`,
       zIndex: app?.zIndex,
       top: `${windowTop}px`,
       left: `${windowLeft}px`
@@ -306,8 +309,6 @@ const maximizeWindow = () => {
 <style lang="less" scoped>
 .window {
   position: absolute;
-  width: 800px;
-  height: 600px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);

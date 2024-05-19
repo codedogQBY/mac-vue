@@ -13,6 +13,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@icon-park/vue-next": "^1.4.2",
+    "dayjs": "^1.11.11",
     "pinia": "^2.0.32",
     "popmotion": "^11.0.5",
     "vue": "^3.2.47",

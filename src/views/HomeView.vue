@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import Dock from '@/components/Dock/Dock.vue'
+import TopBar from "@/components/TopBar/TopBar.vue";
 import { useAppsStore } from '@/stores/apps'
 
 const appsStore = useAppsStore()
@@ -11,6 +11,8 @@ const { openedApps } = storeToRefs(appsStore)
 <template>
   <!--  背景图片，铺满屏幕-->
   <div class="home-container">
+    <!--    顶部菜单栏-->
+    <topBar></topBar>
     <!--  展示所有打开的app-->
     <div v-for="app in openedApps" :key="app.appID">
       <component :is="app.component" />

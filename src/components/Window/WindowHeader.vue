@@ -36,17 +36,17 @@ const maximizeWindow = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10px;
-  min-height: 30px;
+  padding: 0 .6rem;
+  min-height: 1.6rem;
   background-color: #f0f0f0;
   border-bottom: 1px solid #e0e0e0;
 }
 
 button {
-  width: 12px;
-  height: 12px;
+  width: .75rem;
+  height: .75rem;
   border-radius: 50%;
-  margin-right: 5px;
+  margin-right: .3rem;
 }
 
 .close {
