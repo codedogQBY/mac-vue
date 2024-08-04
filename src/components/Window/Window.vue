@@ -116,7 +116,8 @@ const resizeWindow = (e: MouseEvent) => {
     newTop,
     newLeft
   }: T) => {
-    windowEl.style.width = `${newWidth / 16}rem`
+    // 禁止窗口缩小到小于最小宽高
+    windowEl.style.width =  `${newWidth / 16}rem`
     windowEl.style.height = `${newHeight / 16}rem`
     windowEl.style.left = `${newLeft}px`
     windowEl.style.top = `${newTop}px`
@@ -202,7 +203,12 @@ const dragHeader = (e: MouseEvent) => {
     const deltaY = e.clientY - startY
 
     // 禁止窗口拖出屏幕顶部
-    const newTop = Math.max(top + deltaY, topBarHeight)
+    let newTop = Math.max(top + deltaY, topBarHeight)
+    // 禁止窗口脱出屏幕底部
+    const newBottom = newTop + 6* 16
+    if (newBottom > window.innerHeight) {
+      newTop = window.innerHeight - 6 * 16
+    }
     const newLeft = left + deltaX
     windowEl.style.top = `${newTop}px`
     windowEl.style.left = `${newLeft}px`
