@@ -1,19 +1,37 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
-import { useAppsStore } from '@/stores/apps'
+import { useAppsStore,App } from '@/stores/apps'
+import {storeToRefs} from "pinia";
 
 const appsStore = useAppsStore()
-const { openedApps, openApp } = appsStore
+const { openedApps, openApp, openLauncher,closeLauncher,hideAllApps } = appsStore
+const { isOpenLauncher } = storeToRefs(appsStore)
 const props = defineProps<{
   appID: string
   title: string
+  app:App
 }>()
 
-const { appID, title } = props
+const { appID, title,app } = props
 const iconSrc = `/app-icons/${appID}.png`
 
 // 对应的app是否已经打开
 const isOpened = computed(() => openedApps.some((app) => app.appID === appID))
+const handleClick = () => {
+  if(app.link){
+    window.open(app.link, '_blank')
+  }else if(appID === 'launcher'){
+    if (isOpenLauncher.value) {
+      closeLauncher()
+    } else {
+      openLauncher()
+      hideAllApps()
+    }
+  }
+  else{
+    openApp(appID)
+  }
+}
 </script>
 
 <template>
@@ -22,7 +40,7 @@ const isOpened = computed(() => openedApps.some((app) => app.appID === appID))
       <p class="dock-title">
         {{ title }}
       </p>
-      <img :src="iconSrc" alt="app icon" @click="openApp(appID)" />
+      <img :src="iconSrc" alt="app icon" @click="handleClick" />
     </button>
     <div v-if="isOpened" class="dot"></div>
   </div>
@@ -31,6 +49,7 @@ const isOpened = computed(() => openedApps.some((app) => app.appID === appID))
 <style lang="less">
 .dock-item {
   position: relative;
+  cursor: pointer;
   .dock-button {
     border-radius: 1.2rem;
     transition: transform 0.2s ease;

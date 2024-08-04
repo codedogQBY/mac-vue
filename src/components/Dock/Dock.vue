@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import DockItem from './DockItem.vue'
 import {ref, onMounted, onUnmounted} from 'vue'
+import { useAppsStore } from '@/stores/apps'
+
+const appsStore = useAppsStore()
 
 const DockElement = ref<HTMLElement | null>(null)
 
@@ -50,18 +53,7 @@ onUnmounted(() => {
   if (timer) clearTimeout(timer)
 })
 
-const dockItems = [
-  {appID: 'menu', title: '启动台'},
-  {appID: 'read', title: '文章'},
-  {appID: 'file', title: '归档'},
-  {appID: 'friends', title: '友链'},
-  {appID: 'wallpapers', title: '壁纸'},
-  {appID: 'setting', title: '设置'},
-  {appID: 'music', title: '音乐'},
-  {appID: 'message', title: '留言'},
-  {appID: 'mail', title: '联系作者'},
-  {appID: 'github', title: '项目源码'},
-]
+const dockItems = appsStore.apps.filter(app => app.keepInDock)
 
 
 
@@ -75,6 +67,7 @@ const dockItems = [
           :key="item.appID"
           :appID="item.appID"
           :title="item.title"
+          :app="item"
       />
     </div>
   </div>

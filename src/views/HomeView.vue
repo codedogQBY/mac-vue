@@ -2,10 +2,11 @@
 import { storeToRefs } from 'pinia'
 import Dock from '@/components/Dock/Dock.vue'
 import TopBar from "@/components/TopBar/TopBar.vue";
+import LaunchPad from "@/components/LaunchPad/LaunchPad.vue";
 import { useAppsStore } from '@/stores/apps'
 
 const appsStore = useAppsStore()
-const { openedApps } = storeToRefs(appsStore)
+const { isOpenLauncher,openedApps } = storeToRefs(appsStore)
 </script>
 
 <template>
@@ -20,6 +21,8 @@ const { openedApps } = storeToRefs(appsStore)
 
     <!--  底部dock-->
     <Dock />
+    <!--  启动器-->
+    <LaunchPad v-if="isOpenLauncher" />
   </div>
 </template>
 

@@ -2,21 +2,25 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import {allApps} from "@/configs/app.config";
 
-type App = {
+export type App = {
     appID: string
     name: string
     icon: string
-    component: any
+    component?: any
     isShow?: boolean
-    zIndex: number
+    zIndex?: number
     top?: number
     left?: number
+    title?: string
+    keepInDock?: boolean
+    link?: string
 }
 
 export const useAppsStore = defineStore('apps', () => {
     const apps = ref<App[]>(allApps)
     const openedApps = ref<App[]>([])
     const activeApp = ref<App | null>(null)
+    const isOpenLauncher = ref(false)
 
     const appCount = computed(() => openedApps.value.length)
 
@@ -66,6 +70,12 @@ export const useAppsStore = defineStore('apps', () => {
         app.isShow = false
     }
 
+    const hideAllApps = () => {
+        openedApps.value.forEach(app => {
+            app.isShow = false
+        })
+    }
+
     // 当前app是显示还是隐藏
     const isShowApp = (appID: string) => {
         const app = openedApps.value.find(app => app.appID === appID)
@@ -85,12 +95,21 @@ export const useAppsStore = defineStore('apps', () => {
         app.isShow = true
         activeApp.value = app
     }
+    const openLauncher = () => {
+        isOpenLauncher.value = true
+    }
+
+    const closeLauncher = () => {
+        isOpenLauncher.value = false
+    }
+
 
     return {
         apps,
         openedApps,
         activeApp,
         appCount,
+        isOpenLauncher,
         closeApp,
         openApp,
         showApp,
@@ -98,6 +117,9 @@ export const useAppsStore = defineStore('apps', () => {
         isShowApp,
         handleActiveApp,
         isActiveApp,
-        updateAppPosition
+        updateAppPosition,
+        hideAllApps,
+        openLauncher,
+        closeLauncher
     }
 })
