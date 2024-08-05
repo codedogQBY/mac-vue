@@ -10,6 +10,11 @@ const about = reactive({
 
 <template>
   <Window app-i-d="about" title="关于本站">
+   <template #header>
+      <div class="header">
+        <div class="header-title">{{ about.title }}</div>
+      </div>
+    </template>
     <div class="about">
       <div class="top">
         <i class="iconfont icon-apple1"></i>
@@ -28,6 +33,13 @@ const about = reactive({
 </template>
 
 <style scoped lang="less">
+.header{
+  display: flex;
+  justify-content: center;
+  .header-title {
+    text-align: center;
+  }
+}
 .about {
   display: flex;
   flex-direction: column;

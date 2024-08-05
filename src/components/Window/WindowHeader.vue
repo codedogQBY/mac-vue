@@ -20,12 +20,12 @@ const maximizeWindow = () => {
 <template>
   <div class="header">
     <!-- 苹果风格的三个小按钮：关闭、最小化、放大/缩小   -->
-    <div>
+    <div class="buttons">
       <button class="close" @click="closeWindow"></button>
       <button class="minimize" @click="minimizeWindow"></button>
       <button class="maximize" @click="maximizeWindow"></button>
     </div>
-    <div>
+    <div class="content">
       <slot></slot>
     </div>
   </div>
@@ -33,13 +33,16 @@ const maximizeWindow = () => {
 
 <style lang="less" scoped>
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 .6rem;
-  min-height: 1.6rem;
+  padding: .3rem;
   background-color: #f0f0f0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #d9d9d9;
+  position: relative;
+  .buttons{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1rem;
+  }
 }
 
 button {
