@@ -33,7 +33,6 @@ const maximizeWindow = () => {
 
 <style lang="less" scoped>
 .header {
-  padding: .3rem;
   background-color: #f0f0f0;
   border-bottom: 1px solid #d9d9d9;
   position: relative;
@@ -42,6 +41,9 @@ const maximizeWindow = () => {
     top: 50%;
     transform: translateY(-50%);
     left: 1rem;
+  }
+  .content {
+    min-height: 1.8rem;
   }
 }
 

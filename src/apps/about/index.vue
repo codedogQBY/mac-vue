@@ -36,6 +36,11 @@ const about = reactive({
 .header{
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 1.8rem;
+  color: white;
+  // 五彩斑斓的背景
+  background: linear-gradient(90deg, #ff5f56, #ff9966, #ffcc33, #99cc33, #33cc33, #33cc99, #33cccc, #3366cc, #9933cc, #cc33cc, #ff33cc, #ff3366);
   .header-title {
     text-align: center;
   }
