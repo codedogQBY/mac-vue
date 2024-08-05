@@ -8,6 +8,7 @@ import music from '@/apps/music/index.vue';
 import message from '@/apps/message/index.vue';
 import mail from '@/apps/mail/index.vue';
 import github from '@/apps/github/index.vue';
+import about from '@/apps/about/index.vue';
 
 
 export const allApps = [
@@ -127,15 +128,25 @@ export const allApps = [
         keepInDock: true,
     },
     {
+        appID: 'about',
+        name: '关于',
+        title: '关于',
+        icon: 'icon-about',
+        component: about,
+        isShow: false,
+        zIndex: 2,
+        top: 200,
+        left: 300,
+        width: 400,
+        height: 177,
+        keepInDock: true,
+        disableResize: true,
+    },
+    {
         appID: 'github',
         name: 'Github',
         title: 'Github',
         icon: 'icon-github',
-        component: github,
-        isShow: false,
-        zIndex: 2,
-        top: 100,
-        left: 200,
         keepInDock: true,
         link: 'https://www.github.com'
     },

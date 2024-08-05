@@ -14,6 +14,10 @@ export type App = {
     title?: string
     keepInDock?: boolean
     link?: string
+    width?: number
+    height?: number
+    // 是否禁止缩放
+    disableResize?: boolean
 }
 
 export const useAppsStore = defineStore('apps', () => {

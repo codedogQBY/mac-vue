@@ -25,8 +25,8 @@ const WindowElement = ref<HTMLElement | null>(null)
 const HeaderElement = ref<HTMLElement | null>(null)
 
 // 宽高
-const windowWidth = ref(800)
-const windowHeight = ref(600)
+const windowWidth = ref(app.value?.width ?? 800)
+const windowHeight = ref(app.value?.height ?? 600)
 
 // 顶部栏的高度
 const topBarHeight = 1.4 * 16;
@@ -194,6 +194,7 @@ const dragHeader = (e: MouseEvent) => {
   // 标记是否处于拖动状态
   isDragging.value = true
   windowEl.style.userSelect = 'none'
+
 
   const { left, top } = windowEl.getBoundingClientRect()
   const startX = e.clientX
