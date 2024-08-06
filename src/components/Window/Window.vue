@@ -54,6 +54,8 @@ function throttle(fn: Function, delay: number) {
 }
 
 const resizeWindow = (e: MouseEvent) => {
+  if(app.value?.disableResize) return
+
   // 不是激活状态的app不允许缩放
   if (!isActiveApp(appID)) return
 
@@ -177,56 +179,53 @@ const resizeWindow = (e: MouseEvent) => {
 
 // header部分可以拖动
 const dragHeader = (e: MouseEvent) => {
-  // 不是激活状态的app不允许拖动
-  if (!isActiveApp(appID)) return
 
-  const windowEl = WindowElement.value
-  if (!windowEl) return
-  // 如果处于缩放状态，不允许拖动
-  if (isResizing.value) return
+  // 检查是否是激活状态的app
+  if (!isActiveApp(appID)) return;
 
-  // 如果不是鼠标左键按下，不允许拖动
-  if (e.buttons !== 1) return
+  const windowEl = WindowElement.value;
+  if (!windowEl) return;
 
-  // 鼠标样式如果不是默认状态，不允许拖动
-  if (windowEl.style.cursor !== 'default') return
+  // 检查是否按下的是鼠标左键
+  if (e.buttons !== 1) return;
 
-  // 标记是否处于拖动状态
-  isDragging.value = true
-  windowEl.style.userSelect = 'none'
+  // 设置拖拽状态
+  isDragging.value = true;
+  windowEl.style.userSelect = 'none';
 
+  const { left, top } = windowEl.getBoundingClientRect();
+  const startX = e.clientX;
+  const startY = e.clientY;
 
-  const { left, top } = windowEl.getBoundingClientRect()
-  const startX = e.clientX
-  const startY = e.clientY
   const onMouseMove = throttle((e: MouseEvent) => {
-    const deltaX = e.clientX - startX
-    const deltaY = e.clientY - startY
+    // 计算鼠标移动的距离
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
 
-    // 禁止窗口拖出屏幕顶部
-    let newTop = Math.max(top + deltaY, topBarHeight)
-    // 禁止窗口脱出屏幕底部
-    const newBottom = newTop + 6* 16
-    if (newBottom > window.innerHeight) {
-      newTop = window.innerHeight - 6 * 16
-    }
-    const newLeft = left + deltaX
-    windowEl.style.top = `${newTop}px`
-    windowEl.style.left = `${newLeft}px`
+    // 更新窗口的位置
+    windowEl.style.top = `${top + deltaY}px`;
+    windowEl.style.left = `${left + deltaX}px`;
 
-    updateAppPosition(appID, newTop,newLeft )
-    windowTop.value = newTop ?? windowTop.value
-    windowLeft.value = newLeft ?? windowLeft.value
-  }, 0)
+    // 更新应用的位置信息
+    updateAppPosition(appID, top + deltaY, left + deltaX);
+    windowTop.value = top + deltaY;
+    windowLeft.value = left + deltaX;
+  }, 16); // 使用节流函数来限制mousemove事件的触发频率
+
   const onMouseUp = () => {
-    isDragging.value = false
-    windowEl.style.userSelect = 'auto'
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
+    // 重置拖拽状态
+    isDragging.value = false;
+    windowEl.style.userSelect = 'auto';
+
+    // 移除事件监听器
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  // 添加事件监听器
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
 
 onMounted(() => {
   WindowElement.value = document.getElementById(appID)
@@ -269,6 +268,8 @@ const minimizeWindow = () => {
 }
 
 const maximizeWindow = () => {
+  if(app.value?.disableResize) return
+
   const windowEl = WindowElement.value
   if (!windowEl) return
   if (isMaximized.value) {

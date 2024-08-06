@@ -1,92 +1,175 @@
 <script lang="ts" setup>
 import Window from "@/components/Window/Window.vue";
-import { reactive } from 'vue'
-const about = reactive({
-  title: "Mac Vue",
-  version: "v0.0.1 2024-08-06 22:22",
-  copyright: "本项目所用MacOS图标版权为Apple.Inc所有,向MacOS致敬!",
-})
+import { GithubOne } from "@icon-park/vue-next";
+
+const techStack = {
+  'Vue': {
+    icon: 'https://router.vuejs.org/logo.svg',
+    link: 'https://cn.vuejs.org/'
+  },
+  'Pinia': {
+    icon: 'https://pinia.vuejs.org/logo.svg',
+    link: 'https://pinia.vuejs.org/'
+  },
+  'TypeScript': {
+    icon: 'https://www.typescriptlang.org/icons/icon-144x144.png',
+    link: 'https://www.typescriptlang.org/'
+  },
+  'Vite': {
+    icon: 'https://cn.vitejs.dev/logo.svg',
+    link: 'https://cn.vitejs.dev/'
+  },
+  'Less': {
+    icon: 'https://less.bootcss.com/public/img/less_logo.png',
+    link: 'https://less.bootcss.com/'
+  },
+  'Eslint': {
+    icon: 'https://img.icons8.com/?size=100&id=RBnCyho7WRn7&format=png&color=000000',
+    link: 'https://eslint.org/'
+  },
+};
+const github = 'https://' + 'github.com/zhenghaoz/vue3-windows11';
+const icp = '沪ICP备2021000000号';
+const about = {
+  title: '关于本站',
+  content: [
+    '基于Vue3和TypeScript的仿Mac系统',
+    '目前实现了自定义应用的功能',
+    '后续会继续完善，欢迎Star和Fork',
+  ],
+};
 </script>
 
 <template>
   <Window app-i-d="about" title="关于本站">
-   <template #header>
+    <template #header>
       <div class="header">
         <div class="header-title">{{ about.title }}</div>
       </div>
     </template>
     <div class="about">
-      <div class="top">
-        <i class="iconfont icon-apple1"></i>
-        <div class="info">
-          <div class="title">{{ about.title }}</div>
-          <div class="version">{{ about.version }}</div>
+      <div class="about-content">
+        <div class="content-block">
+          <h4 style="width: 12rem">技术栈：</h4>
+          <div class="tech-stack">
+            <div v-for="(value, key) in techStack" :key="key" class="tech-item">
+              <a :href="value.link" target="_blank">
+                <img :src="value.icon" alt="" />
+                <span>{{ key }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="content-block">
+          <h4 style="width: 5rem">关于本站：</h4>
+          <div class="about-list">
+            <div v-for="(item, index) in about.content" :key="index">{{ item }}</div>
+          </div>
+        </div>
+        <div class="content-block">
+          <h4>GitHub：</h4>
+          <a :href="github" target="_blank">
+            <GithubOne size="30" />
+          </a>
+        </div>
+        <div class="content-block">
+          <h4>备案号：</h4>
+          <div>{{ icp }}</div>
         </div>
       </div>
-      <div class="badges">
-        <img src="https://svg.hamm.cn/gitee.svg?type=star&user=hamm&project=mac-ui&logo=yes" />
-        <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=mac-ui&type=issue&logo=yes" />
-      </div>
-      <div class="copyright">{{ about.copyright }}</div>
     </div>
   </Window>
 </template>
 
 <style scoped lang="less">
-.header{
+.header {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 1.8rem;
+  height: 2.5rem;
   color: white;
-  // 五彩斑斓的背景
-  background: linear-gradient(90deg, #ff5f56, #ff9966, #ffcc33, #99cc33, #33cc33, #33cc99, #33cccc, #3366cc, #9933cc, #cc33cc, #ff33cc, #ff3366);
+  background-color: #007bff;
+  border-radius: 5px 5px 0 0;
   .header-title {
     text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
   }
 }
+
 .about {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background: #c7c6c6;
-  color: #333;
-  text-shadow: none;
-  font-weight: 300;
-  .top {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    padding: 20px 40px;
-    .iconfont {
-      font-size: 48px;
-      margin-right: 20px;
-    }
-    .info {
-      flex-grow: 1;
-
-      .title {
-        font-size: 24px;
+  padding: 1.5rem;
+  font-family: 'Arial', sans-serif;
+  background: #f9f9f9;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  .about-content {
+    .content-block {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      h4 {
+        margin-right: 1rem;
+        color: #333;
+        font-size: 1rem;
+        font-weight: normal;
       }
-
-      .version {
-        font-size: 14px;
-        color: #999;
+      .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        .tech-item {
+          display: flex;
+          align-items: center;
+          padding: 0.5rem;
+          transition: transform 0.2s ease;
+          a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            img {
+              width: 24px;
+              height: 24px;
+              margin-right: 0.5rem;
+            }
+            span {
+              font-size: 0.9rem;
+            }
+          }
+          &:hover {
+            transform: translateY(-2px);
+            cursor: pointer;
+          }
+        }
+      }
+      .about-list {
+        div {
+          margin-bottom: 0.5rem;
+          color: #555;
+          font-size: 0.9rem;
+        }
+      }
+      a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #007bff;
+        font-size: 0.9rem;
+        cursor: pointer;
+        &:hover {
+          color: #0056b3;
+        }
       }
     }
   }
-  .badges {
-    text-align: center;
-    img {
-      margin: 0px 3px;
-    }
-  }
-  .copyright {
-    font-size: 12px;
-    color: #999;
-    padding: 20px;
-    text-align: center;
-  }
+}
+
+.about-content a img {
+  transition: transform 0.2s ease;
+}
+
+.about-content a:hover img {
+  transform: scale(1.05);
 }
 </style>
