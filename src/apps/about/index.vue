@@ -1,30 +1,25 @@
 <script lang="ts" setup>
 import Window from '@/components/Window/Window.vue'
 import { GithubOne } from '@icon-park/vue-next'
-import { watch } from 'vue'
-import { useAppsStore } from '@/stores/apps'
-
-const appsStore = useAppsStore()
-const { setMenuCommand } = appsStore
+import { useMenuCommand } from '@/hooks/useMenuCommand'
+import { defineProps, toRef } from 'vue'
 
 const props = defineProps<{
   menuCommand: string | number | null
 }>()
 
-watch(
-  () => props.menuCommand,
-  (val) => {
-    const commandMap: Record<string | number, () => void> = {
-      about_us: () => {
-        window.open('https://www.baidu.com', '_blank')
-      }
-    }
-    if (val && commandMap[val]) {
-      commandMap[val]()
-    }
-    setMenuCommand(null)
-  }
-)
+// 将 menuCommand 转换为 Ref，以便传递给自定义 Hook
+const menuCommandRef = toRef(props, 'menuCommand')
+
+const commandMap = {
+  about_us: () => {
+    window.open('https://www.baidu.com', '_blank')
+  },
+  // 添加更多命令
+}
+
+// 使用自定义 Hook 来处理 menuCommand
+useMenuCommand(menuCommandRef, commandMap)
 
 const techStack = {
   Vue: {
