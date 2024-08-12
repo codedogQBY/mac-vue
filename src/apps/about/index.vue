@@ -1,52 +1,67 @@
 <script lang="ts" setup>
-import Window from "@/components/Window/Window.vue";
-import { GithubOne } from "@icon-park/vue-next";
-import {watch} from "vue";
+import Window from '@/components/Window/Window.vue'
+import { GithubOne } from '@icon-park/vue-next'
+import { watch } from 'vue'
+import { useAppsStore } from '@/stores/apps'
+
+const appsStore = useAppsStore()
+const { setMenuCommand } = appsStore
 
 const props = defineProps<{
-  menuCommand: string|number|null;
-}>();
+  menuCommand: string | number | null
+}>()
 
-watch(()=>props.menuCommand,(val)=>{
-  console.log('menuCommand:',val)
-})
+watch(
+  () => props.menuCommand,
+  (val) => {
+    const commandMap: Record<string | number, () => void> = {
+      about_us: () => {
+        window.open('https://www.baidu.com', '_blank')
+      }
+    }
+    if (val && commandMap[val]) {
+      commandMap[val]()
+    }
+    setMenuCommand(null)
+  }
+)
 
 const techStack = {
-  'Vue': {
+  Vue: {
     icon: 'https://router.vuejs.org/logo.svg',
     link: 'https://cn.vuejs.org/'
   },
-  'Pinia': {
+  Pinia: {
     icon: 'https://pinia.vuejs.org/logo.svg',
     link: 'https://pinia.vuejs.org/'
   },
-  'TypeScript': {
+  TypeScript: {
     icon: 'https://www.typescriptlang.org/icons/icon-144x144.png',
     link: 'https://www.typescriptlang.org/'
   },
-  'Vite': {
+  Vite: {
     icon: 'https://cn.vitejs.dev/logo.svg',
     link: 'https://cn.vitejs.dev/'
   },
-  'Less': {
+  Less: {
     icon: 'https://less.bootcss.com/public/img/less_logo.png',
     link: 'https://less.bootcss.com/'
   },
-  'Eslint': {
+  Eslint: {
     icon: 'https://img.icons8.com/?size=100&id=RBnCyho7WRn7&format=png&color=000000',
     link: 'https://eslint.org/'
-  },
-};
-const github = 'https://' + 'github.com/zhenghaoz/vue3-windows11';
-const icp = '沪ICP备2021000000号';
+  }
+}
+const github = 'https://' + 'github.com/zhenghaoz/vue3-windows11'
+const icp = '沪ICP备2021000000号'
 const about = {
   title: '关于本站',
   content: [
     '基于Vue3和TypeScript的仿Mac系统',
     '目前实现了自定义应用的功能',
-    '后续会继续完善，欢迎Star和Fork',
-  ],
-};
+    '后续会继续完善，欢迎Star和Fork'
+  ]
+}
 </script>
 
 <template>
