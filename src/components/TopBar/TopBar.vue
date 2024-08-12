@@ -3,59 +3,37 @@
     <div class="left">
       <div class="menus">
         <Apple class="menu" theme="filled" />
-        <div class="menu" v-for="config in menuConfigs" :key="config.title">
-          {{config.title}}
-        </div>
+        <MacDropdown
+            :menuItems="menuOptions"
+            @select="handleSelect"
+        />
       </div>
     </div>
     <div class="right">
-      <Drawer
-          v-model:visible="visible"
-      >
-        <div @click="toggleDrawer">
           <RightTime />
-        </div>
-        <template #content>
-          <div>Drawer Content</div>
-        </template>
-      </Drawer>
     </div>
   </header>
 </template>
 
 <script lang="ts" setup>
 import RightTime from '@/components/TopBar/components/special/RightTime.vue'
-import Drawer from "@/components/common/Drawer.vue";
 import { Apple } from '@icon-park/vue-next'
-import { ref } from 'vue'
+import {computed} from 'vue'
+import MacDropdown from './MacDropdown.vue';
+import { storeToRefs } from 'pinia'
+import { useAppsStore } from '@/stores/apps'
 
-const visible = ref(false)
-const toggleDrawer = () => {
-  visible.value = !visible.value
+const appsStore = useAppsStore()
+const {setMenuCommand} = appsStore
+const { activeApp } = storeToRefs(appsStore)
+
+const menuOptions = computed(()=>{
+  return activeApp?.value?.menus ?? []
+})
+
+function handleSelect(key: string | number) {
+  setMenuCommand(key)
 }
-const menuConfigs = ref([
-  {
-    title: '访达'
-  },
-  {
-    title: '文件'
-  },
-  {
-    title: '编辑'
-  },
-  {
-    title: '显示'
-  },
-  {
-    title: '前往'
-  },
-  {
-    title: '窗口'
-  },
-  {
-    title: '帮助'
-  }
-])
 </script>
 
 <style lang="less" scoped>

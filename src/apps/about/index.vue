@@ -1,6 +1,15 @@
 <script lang="ts" setup>
 import Window from "@/components/Window/Window.vue";
 import { GithubOne } from "@icon-park/vue-next";
+import {watch} from "vue";
+
+const props = defineProps<{
+  menuCommand: string|number|null;
+}>();
+
+watch(()=>props.menuCommand,(val)=>{
+  console.log('menuCommand:',val)
+})
 
 const techStack = {
   'Vue': {
