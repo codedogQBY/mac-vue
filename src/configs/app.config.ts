@@ -137,7 +137,7 @@ export const allApps = [
     top: 200,
     left: 500,
     width: 400,
-    height: 460,
+    height: 480,
     keepInDock: true,
     disableResize: true,
     menus: [

@@ -4,11 +4,14 @@ import Dock from '@/components/Dock/Dock.vue'
 import TopBar from '@/components/TopBar/TopBar.vue'
 import LaunchPad from '@/components/LaunchPad/LaunchPad.vue'
 import { useAppsStore } from '@/stores/apps'
+import {useGlobalStore} from '@/stores/global'
 import { computed, markRaw } from 'vue'
 
 const appsStore = useAppsStore()
+const globalStore = useGlobalStore()
 const { resetActiveApp } = appsStore
 const { isOpenLauncher, openedApps, menuCommand } = storeToRefs(appsStore)
+const { wallpaperUrl } = storeToRefs(globalStore)
 const command = computed(() => menuCommand.value)
 
 // 点击空白处，取消激活状态
@@ -21,7 +24,7 @@ document.addEventListener('click', (e) => {
 
 <template>
   <!--  背景图片，铺满屏幕-->
-  <div class="home-container">
+  <div class="home-container" :style="{ backgroundImage: `url(${wallpaperUrl})` }">
     <!--    顶部菜单栏-->
     <topBar></topBar>
     <!--  展示所有打开的app-->
@@ -43,7 +46,6 @@ document.addEventListener('click', (e) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/wallpapers/2.jpg');
   background-size: cover;
   background-position: center;
 }

@@ -289,17 +289,17 @@ const maximizeWindow = () => {
 
 <template>
   <div
-    class="window"
-    :id="appID"
-    :style="{
+      class="window"
+      :id="appID"
+      :style="{
       width: `${windowWidth / 16}rem`,
       height: `${windowHeight / 16}rem`,
       zIndex: app?.zIndex,
       top: `${windowTop}px`,
       left: `${windowLeft}px`
     }"
-    v-show="isShowApp(appID)"
-    @click="() => handleActiveApp(appID)"
+      v-show="isShowApp(appID)"
+      @click="() => handleActiveApp(appID)"
   >
     <div class="window-header" :id="`header-${appID}`">
       <WindowHeader @close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow">
@@ -321,5 +321,25 @@ const maximizeWindow = () => {
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
+}
+
+.window-content {
+  height: calc(100% - 2.8rem); /* Header height is subtracted */
+  overflow-y: auto; /* Show scrollbar only when content overflows */
+  box-sizing: border-box;
+}
+
+/* Hide scrollbar when content does not overflow */
+.window-content::-webkit-scrollbar {
+  width: 0; /* Hide scrollbar by default */
+}
+
+.window-content:has(:nth-child(n))::-webkit-scrollbar {
+  width: 8px; /* Show scrollbar when there are children */
+}
+
+.window-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 </style>
