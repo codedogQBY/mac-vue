@@ -1,140 +1,150 @@
 <!-- WallpaperStore.vue -->
 <template>
-  <div class="wallpaper-store">
-    <header class="titlebar">
-      <span>Wallpapers</span>
-    </header>
-
-    <section class="main-area">
-      <section class="selected-wallpaper-section">
-        <div class="image" :style="{ backgroundImage: currentWallpaperThumb }" />
-
-        <div class="info">
-          <h2>{{ currentWallpaper.name }}</h2>
-          <p class="wallpaper-type">{{ currentWallpaper.type }} wallpaper</p>
-
-          <div v-if="currentWallpaper.type !== 'standalone'">
-            <label>
-              <input type="checkbox" v-model="canControlTheme" />
-              Change dark/light mode as wallpapers change
-            </label>
-          </div>
+  <div class="wallpaper-container">
+    <!-- 当前选中壁纸 -->
+    <h2 class="wallpaper-title">当前壁纸</h2>
+    <div class="current-wallpaper">
+      <img :src="wallpaperUrl" alt="Current Wallpaper" class="wallpaper" />
+    </div>
+    <!-- 壁纸列表 -->
+    <h2 class="wallpaper-title">壁纸列表</h2>
+    <div class="wallpapers">
+      <div
+          v-for="(group, key) in wallpapers"
+          :key="key"
+          class="wallpaper-item"
+      >
+        <h3 class="wallpaper-group-title">{{ group.name }}</h3>
+        <div class="wallpaper-group">
+          <div
+              v-for="wallpaper in group.image"
+              :key="wallpaper"
+              class="wallpaper-thumbnail"
+              :style="{ backgroundImage: `url(${wallpaper})` }"
+              @click="changeWallpaper(wallpaper)"
+          ></div>
         </div>
-      </section>
-
-      <section class="dynamic-wallpapers">
-        <h2>Dynamic Wallpapers</h2>
-        <div class="wallpapers">
-          <div v-for="([id, wallpaper]) in dynamicWallpapers" :key="id" class="wallpaper-button">
-            <button @click="changeWallpaper(id)" @mouseenter="preloadImage(wallpaper.image)">
-              <img :src="wallpaper.thumbnail" :alt="`MacOS ${wallpaper.name} Wallpapers, dynamic`" />
-            </button>
-            <p>{{ wallpaper.name }}</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="standalone-wallpapers">
-        <h2>Standalone Wallpapers</h2>
-        <div class="wallpapers">
-          <div v-for="([id, wallpaper]) in standaloneWallpapers" :key="id" class="wallpaper-button">
-            <button @click="changeWallpaper(id)" @mouseenter="preloadImage(wallpaper.image)">
-              <img :src="wallpaper.thumbnail" :alt="`MacOS ${wallpaper.name} Wallpapers, standalone`" />
-            </button>
-            <p>{{ wallpaper.name }}</p>
-          </div>
-        </div>
-      </section>
-    </section>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import { useWallpaperStore } from '@/stores/wallpaperStore';
-import { wallpapersConfig } from '@/configs/wallpapers';
+import { useGlobalStore } from '@/stores/global'
+import { useWallpaperStore } from '@/stores/wallpapers'
+import { storeToRefs } from 'pinia'
 
-const wallpaperStore = useWallpaperStore();
-const currentWallpaper = computed(() => wallpaperStore.currentWallpaper);
-const canControlTheme = ref(wallpaperStore.canControlTheme);
+const globalStore = useGlobalStore()
+const wallpapersStore = useWallpaperStore()
 
-const dynamicWallpapers = computed(() =>
-    Object.entries(wallpapersConfig).filter(([, config]) => config.type === 'dynamic')
-);
-const standaloneWallpapers = computed(() =>
-    Object.entries(wallpapersConfig).filter(([, config]) => config.type === 'standalone')
-);
-
-const currentWallpaperThumb = computed(() => `url(${currentWallpaper.value.image})`);
-
-function changeWallpaper(wallpaperName: string) {
-  wallpaperStore.setWallpaper(wallpaperName);
-}
-
-function preloadImage(url: string) {
-  const link = document.createElement('link');
-  link.rel = 'prefetch';
-  link.href = url;
-  link.as = 'image';
-  document.head.appendChild(link);
-}
+const { changeWallpaper } = useGlobalStore()
+const { wallpapers } = wallpapersStore
+const { wallpaperUrl } = storeToRefs(globalStore)
 </script>
 
-<style lang="less">
-.wallpaper-store {
-  background-color: var(--system-color-light);
-  display: grid;
-  grid-template-rows: auto 1fr;
-  height: 100%;
-  overflow-y: hidden;
+
+
+<style lang="less" scoped>
+.wallpaper-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 }
 
-.titlebar {
+.wallpaper-title {
+  font-size: 1.75rem; /* 增大字体 */
+  font-weight: 700; /* 更粗的字体 */
+  margin-bottom: 20px;
+  padding: 10px 20px; /* 调整内边距 */
+  color: #fff; /* 白色字体 */
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); /* 渐变背景 */
+  border-radius: 5px; /* 圆角 */
+  text-align: left;
+  display: inline-block; /* 使标题宽度根据内容自适应 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+  max-width: fit-content; /* 确保标题不会占满整行 */
+}
+
+.current-wallpaper {
+  margin-bottom: 40px;
   display: flex;
   justify-content: center;
-  padding: 0.9rem 1rem;
-  border-bottom: solid 0.9px hsla(var(--system-color-dark-hsl), 0.3);
-}
-
-.main-area {
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-.selected-wallpaper-section {
-  display: grid;
-  gap: 1rem;
-  .image {
-    width: 30rem;
-    height: auto;
-    border-radius: 1rem;
-    aspect-ratio: 16 / 10;
-    background-size: cover;
-    background-position: center;
-  }
-}
-
-.dynamic-wallpapers,
-.standalone-wallpapers {
-  .wallpapers {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    gap: 1rem;
-  }
-}
-
-.wallpaper-button button {
-  aspect-ratio: 1 / 1;
-}
-
-.wallpaper-button img {
+  align-items: center;
   width: 100%;
-  object-fit: cover;
-  border-radius: 0.75rem;
-  transition: box-shadow 100ms ease-in;
+  max-width: 100%;
+  height: 400px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5;
+
+  .wallpaper {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+
+  @media (max-width: 480px) {
+    height: 200px;
+  }
 }
 
-.wallpaper-button img:hover {
-  box-shadow: 0 0 0 0.25rem hsla(var(--system-color-primary-hsl), 0.7);
+.wallpapers {
+  width: 100%;
+
+  .wallpaper-item {
+    margin-bottom: 30px;
+
+    .wallpaper-group-title {
+      font-size: 1.5rem; /* 墑字体 */
+      font-weight: 600; /* 更粗的字体 */
+      margin-bottom: 15px;
+      color: #fff; /* 白色字体 */
+      background: linear-gradient(90deg, #ff6a00 0%, #ee0979 100%); /* 渐变背景 */
+      padding: 5px 15px; /* 调整内边距 */
+      border-radius: 5px; /* 圆角 */
+      text-align: left;
+      display: inline-block; /* 使标题宽度根据内容自适应 */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+      max-width: fit-content; /* 确保标题不会占满整行 */
+    }
+
+    .wallpaper-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      justify-content: flex-start;
+
+      .wallpaper-thumbnail {
+        width: 100%;
+        height: 150px;
+        border-radius: 10px;
+        background-size: cover;
+        background-position: center;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          transform: scale(1.05);
+          border-color: #aaa; /* 修改悬停时的边框颜色 */
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
 }
 </style>
