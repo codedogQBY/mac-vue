@@ -68,7 +68,7 @@ const resizeWindow = (e: MouseEvent) => {
   const isLeft = clientX - left < 10
   const isRight = left + width - clientX < 10
   // 防止顶部拖拽空间太小
-  const isTop = clientY - top < 2
+  const isTop = clientY - top < 5
   const isBottom = top + height - clientY < 10
   const isTopLeft = isTop && isLeft
   const isTopRight = isTop && isRight
@@ -183,6 +183,11 @@ const dragHeader = (e: MouseEvent) => {
   // 检查是否是激活状态的app
   if (!isActiveApp(appID)) return;
 
+  // 鼠标不是默认状态时，不允许拖动
+  if (WindowElement.value?.style.cursor !== 'default') return;
+
+  if (isResizing.value) return;
+
   const windowEl = WindowElement.value;
   if (!windowEl) return;
 
@@ -247,6 +252,7 @@ onUnmounted(() => {
     HeaderElement.value.removeEventListener('mousedown', dragHeader)
   }
 })
+
 
 const closeWindow = () => {
   closeApp(appID)
